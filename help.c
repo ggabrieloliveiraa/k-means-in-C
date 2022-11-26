@@ -80,19 +80,19 @@ void solve(const int *x, const int *y, int *items, int size, int l, const int n,
     	double cur = getCurAccuracy(x, y, items, n);
     	if (cur > *eps) *eps = cur;
     } else {
-        for (i = l; i < size; i++) {
-            if (l ^ i) {
+    	for (i = l; i < size; i++) {
+    		if (l ^ i) {
+    			items[l] ^= items[i];
+    			items[i] ^= items[l];
+    			items[l] ^= items[i];
+    			solve(x, y, items, size, l + 1, n, eps);
+    			items[l] ^= items[i];
+    			items[i] ^= items[l];
             	items[l] ^= items[i];
-            	items[i] ^= items[l];
-            	items[l] ^= items[i];
-            	solve(x, y, items, size, l + 1, n, eps);
-            	items[l] ^= items[i];
-            	items[i] ^= items[l];
-            	items[l] ^= items[i];
-            } else {
-            	solve(x, y, items, size, l + 1, n, eps);
-            }
-        }
+    		} else {
+    			solve(x, y, items, size, l + 1, n, eps);
+    		}
+    	}
     }
 }
 

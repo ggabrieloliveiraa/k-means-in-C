@@ -38,18 +38,18 @@ int main(int argc, char **argv) {
 	int *res = (int*)malloc(n * sizeof(int));
 	long long l1;
 	time_start();
-    kmeans(x, res, n, m, k);
-    l1 = time_stop();
-    if (argc > 6) {
-    	int *ideal = (int*)malloc(n * sizeof(int));
-    	fscanfSpliting(ideal, n, argv[6]);
-    	const double a = caclAccuracy(ideal, res, n);
-    	fprintf_full_res(res, n, a, argv[5]);
-    	free(ideal);
-    	printf("Accuracy of k-means clustering = %lf;\n", a);
-    } else {
-    	fprintfRes(res, n, argv[5]);
-    }
+	kmeans(x, res, n, m, k);
+	l1 = time_stop();
+	if (argc > 6) {
+		int *ideal = (int*)malloc(n * sizeof(int));
+		fscanfSpliting(ideal, n, argv[6]);
+		const double a = caclAccuracy(ideal, res, n);
+		fprintf_full_res(res, n, a, argv[5]);
+		free(ideal);
+		printf("Accuracy of k-means clustering = %lf;\n", a);
+	} else {
+		fprintfRes(res, n, argv[5]);
+	}
 	printf("K-means clustering time:  %lld number of processor clock cycles;\nThe work of the program is completed!\n", l1);
 	free(x);
 	free(res);
