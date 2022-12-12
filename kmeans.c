@@ -51,7 +51,7 @@ void autoscaling(double *x, const int n, const int m) {
 	const int s = n * m;
 	double sd, Ex, Exx;
 	int i, j = 0;
-	while (j < n) {
+	while (j < m) {
 		i = j;
 		Ex = Exx = 0;
 		while (i < s) {
