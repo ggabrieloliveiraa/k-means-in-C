@@ -8,7 +8,7 @@ The main idea of the algorithm is that at each iteration, based on the existing 
   +  $X=\mathrm{x}_{i=1,j=1}^{n,m}$ — description of objects;  
   +  *k* ∈ ℕ — number of clusters.  
 #### Output data:   
-  +  $Y=\{ y_{i}|y_{i}\in \left\{1,...,k\right\}, i\in\ \overline{\left(1,n\right)}\}$ — cluster labels.  
+  +  $Y=\left\{y_i|y_i\in\left\{1,\ldots,k\right\},i\in\overline{\left(1,n\right)}\right\}$ — cluster labels.  
 #### Advantages of k-means:
   +  Low algorithmic complexity;  
   +  Easy to implement;  
@@ -19,15 +19,16 @@ The main idea of the algorithm is that at each iteration, based on the existing 
   +  Algorithm k-means poorly separates  closely spaced clusters with a complex structure;  
   +  The need for preliminary determination of the number of clusters.  
 ### Steps of k-means algorithm  
-Step 1. Data preparing (autoscaling) $\mathrm{x}_{i,j} = \frac{\mathrm{x}_{i,j}-\mathrm{E_{X^{j}}}}{\mathrm{\sigma_{X^{j}}}}$;  
-Step 2. Set initial cluster centers $C = \left\{c_{i}| c_{i} \in \mathbb{R}^{m}, i \in \overline{\left(1,k\right)} \right\}$;  
+Step 1. Data preparing (autoscaling) $x_{i,j}=\frac{x_{i,j}-\mathrm{E_{X^{j}}}}{\sigma_{X^{j}}}$;  
+Step 2. Set initial cluster centers $C=\left\{c_i|c_i\in\\ \mathbb{R}^{m},i\in\overline{\left(1,k\right)}\right\}$;  
 Step 3. Calculate the initial partition $y_{i} = \arg\min\limits_{j}\rho\left(x_{i},c_{j} \right)$;  
 Step 4. Calculate new cluster centers  
-$$h\left(y_{i},j\right) = & \left\{
-    \begin{matrix}
-    1 & \mbox{if  } y_{i} = j, \\
-    0 & \mbox{if  } y_{i} \neq j;
-    \end{matrix} \right.$$  
+$$h(y_{i},j)=\left\lbrace
+\begin{array}{ll}
+1 & if\ y_i=j, \newline
+0 & if\ y_i\neq j;
+\end{array}
+\right.$$  
 $$l_{j}=\sum_{i=1}^{n}h\left(y_{i},j \right)$$  
 $$c_{j}=\frac{1}{l_{j}}\sum_{i=1}^{n}h\left(y_{i},j\right)\cdot x_{i}$$  
 Step 5. Calculate a new split $y_{i} = \arg\min\limits_{j}\rho\left(x_{i},c_{j} \right)$;   
