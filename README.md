@@ -19,14 +19,11 @@ The main idea of the algorithm is that at each iteration, based on the existing 
   +  Algorithm k-means poorly separates  closely spaced clusters with a complex structure;  
   +  The need for preliminary determination of the number of clusters.  
 ### Steps of k-means algorithm  
-Step 1. Data preparing (autoscaling) $x_{i,j}=\frac{x_{i,j}-\mathrm{E_{X^{j}}}}{\sigma_{X^{j}}}$;  
-Step 2. Set initial cluster centers $C = \left\\{c_{i}| c_{i} \in R^{m}, i \in \overline{\left(1,k\right)} \right\\}$;  
-Step 3. Calculate the initial partition $y_{i} = \arg\min\limits_{j}\rho\left(x_{i},c_{j} \right)$;  
-Step 4. Calculate new cluster centers  
-$$h(y_i,j)=\left\lbrace\begin{array}{ll}1 & \textrm{if } y_i=j, \newline 0 & \textrm{if } y_i\neq j;\end{array}\right.$$  
-$$l_{j}=\sum_{i=1}^{n}h\left(y_{i},j \right)$$  
-$$c_{j}=\frac{1}{l_{j}}\sum_{i=1}^{n}h\left(y_{i},j\right)\cdot x_{i}$$  
-Step 5. Calculate a new split $y_{i} = \arg\min\limits_{j}\rho\left(x_{i},c_{j} \right)$;   
+Step 1. Data preparing (autoscaling): $x_{i,j}=\frac{x_{i,j}-\mathrm{E_{X^{j}}}}{\sigma_{X^{j}}}$;  
+Step 2. Set initial cluster centers: $C = \left\\{c_{i}| c_{i} \in R^{m}, i \in \overline{\left(1,k\right)} \right\\}$;  
+Step 3. Calculate the initial partition: $y_{i} = \arg\min\limits_{j}\rho\left(x_{i},c_{j} \right)$;  
+Step 4. Calculate new cluster centers: $c_j=\frac{\sum_{i=1}^{n}\left[y_i\equiv j\right]\cdot x_i}{\sum_{i=1}^{n}\left[y_i\equiv j\right]}$;  
+Step 5. Calculate a new split: $y_{i} = \arg\min\limits_{j}\rho\left(x_{i},c_{j} \right)$;   
 Step 6. Repeat steps 4, 5 until the split changes.  
 ## Example of usage
 ```
