@@ -3,7 +3,7 @@
 void fscanfData(const char *fn, double *x, const int n) {
 	FILE *fl = fopen(fn, "r");
 	if (fl == NULL) {
-		printf("Error in opening %s file..\n", fn);
+		printf("Error in opening %s file...\n", fn);
 		exit(1);
 	}
 	int i = 0;
@@ -90,11 +90,11 @@ double getCurAccuracy(const int *x, const int *y, const int *a, const int n) {
 }
 
 void solve(const int *x, const int *y, int *items, int size, int l, const int n, double *eps) {
-    int i;
     if (l == size) {
     	double cur = getCurAccuracy(x, y, items, n);
     	if (cur > *eps) *eps = cur;
     } else {
+    	int i;
         for (i = l; i < size; i++) {
             if (l ^ i) {
             	items[l] ^= items[i];
