@@ -1,9 +1,8 @@
 #include "kmeans.h"
 
-double getEvDist(const double *x1, const double *x2, const int m) {
+double getEvDist(const double *x1, const double *x2, int m) {
 	double d, r = 0.0;
-	int i = 0;
-	while (i++ < m) {
+	while (m--) {
 		d = *(x1++) - *(x2++);
 		r += d * d;
 	}
@@ -30,9 +29,8 @@ void autoscaling(double* const x, const int n, const int m) {
 	}
 }
 
-char constr(const int *y, const int val, const int s) {
-	int i = 0;
-	while (i++ < s) {
+char constr(const int *y, const int val, int s) {
+	while (s--) {
 		if (*(y++) == val) return 1;
 	}
 	return 0;
@@ -54,24 +52,22 @@ void detCores(const double* const x, double* const c, const int n, const int m, 
 }
 
 int getCluster(const double *x, const double *c, const int m, const int k) {
-	double curD, minD = DBL_MAX;
-	int counter = 0, res = 0;
-	while (counter < k) {
-		curD = getEvDist(x, c, m);
+	double minD = DBL_MAX;
+	int i, res = 0;
+	for (i = 0; i < k; i++) {
+		const double curD = getEvDist(x, c, m);
 		if (curD < minD) {
 			minD = curD;
-			res = counter;
+			res = i;
 		}
-		counter++;
 		c += m;
 	}
 	return res;
 }
 
-void detStartSplitting(const double *x, const double *c, int* const y, const int n, const int m, const int k) {
-	int i;
-	for (i = 0; i < n; i++) {
-		y[i] = getCluster(&x[i * m], &c[0], m, k);
+void detStartSplitting(const double *x, const double *c, int* const y, int n, const int m, const int k) {
+	while (n--) {
+		y[n] = getCluster(&x[n * m], &c[0], m, k);
 	}
 }
 
@@ -87,8 +83,9 @@ char checkSplitting(const double *x, double *c, int* const res, const int n, con
 		if (f != res[i]) flag = 1;
 		res[i] = f;
 		nums[f]++;
+		f *= m;
 		for (j = 0; j < m; j++) {
-			newCores[f * m + j] += x[i * m + j];
+			newCores[f + j] += x[i * m + j];
 		}
 	}
 	for (i = 0; i < k; i++) {
