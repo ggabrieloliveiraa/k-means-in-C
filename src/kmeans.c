@@ -1,6 +1,6 @@
 #include "kmeans.h"
 
-double getEvDist(const double *x1, const double *x2, int m) {
+double get_distance(const double *x1, const double *x2, int m) {
 	double d, r = 0.0;
 	while (m--) {
 		d = *(x1++) - *(x2++);
@@ -15,7 +15,7 @@ void autoscaling(double* const x, const int n, const int m) {
 	for (j = 0; j < m; j++) {
 		double sd, Ex, Exx, *ptr;
 		Ex = Exx = 0;
-		for (ptr = &x[j]; ptr <= &x[s - 1]; ptr += m) {
+		for (ptr = x + j; ptr <= x + s - 1; ptr += m) {
 			sd = *ptr;
 			Ex += sd;
 			Exx += sd * sd;
@@ -23,7 +23,7 @@ void autoscaling(double* const x, const int n, const int m) {
 		Exx /= n;
 		Ex /= n;
 		sd = sqrt(Exx - Ex * Ex);
-		for (ptr = &x[j]; ptr <= &x[s - 1]; ptr += m) {
+		for (ptr = x + j; ptr <= x + s - 1; ptr += m) {
 			*ptr = (*ptr - Ex) / sd;
 		}
 	}
@@ -36,26 +36,26 @@ char constr(const int *y, const int val, int s) {
 	return 0;
 }
 
-void detCores(const double* const x, double* const c, const int n, const int m, const int k) {
+void det_cores(const double* const x, double* const c, const int n, const int m, const int k) {
 	int *nums = (int*)malloc(k * sizeof(int));
 	srand((unsigned int)time(NULL));
 	int i;
 	for (i = 0; i < k; i++) {
 		int val = rand() % n;
-		while (constr(&nums[0], val, i)) {
+		while (constr(nums, val, i)) {
 			val = rand() % n;
 		}
 		nums[i] = val;
-		memcpy(&c[i * m], &x[val * m], m * sizeof(double));
+		memcpy(c + i * m, x + val * m, m * sizeof(double));
 	}
 	free(nums);
 }
 
-int getCluster(const double *x, const double *c, const int m, const int k) {
+int get_cluster(const double *x, const double *c, const int m, const int k) {
 	double minD = DBL_MAX;
 	int i, res = 0;
 	for (i = 0; i < k; i++) {
-		const double curD = getEvDist(x, c, m);
+		const double curD = get_distance(x, c, m);
 		if (curD < minD) {
 			minD = curD;
 			res = i;
@@ -65,21 +65,21 @@ int getCluster(const double *x, const double *c, const int m, const int k) {
 	return res;
 }
 
-void detStartSplitting(const double *x, const double *c, int* const y, int n, const int m, const int k) {
+void det_start_splitting(const double *x, const double *c, int* const y, int n, const int m, const int k) {
 	while (n--) {
-		y[n] = getCluster(&x[n * m], &c[0], m, k);
+		y[n] = get_cluster(x + n * m, c, m, k);
 	}
 }
 
-char checkSplitting(const double *x, double *c, int* const res, const int n, const int m, const int k) {
+char check_splitting(const double *x, double *c, int* const res, const int n, const int m, const int k) {
 	double *newCores = (double*)malloc(k * m * sizeof(double));
-	memset(&newCores[0], 0, k * m * sizeof(double));
+	memset(newCores, 0, k * m * sizeof(double));
 	int *nums = (int*)malloc(k * sizeof(int));
-	memset(&nums[0], 0, k * sizeof(int));
+	memset(nums, 0, k * sizeof(int));
 	char flag = 0;
 	int i, j, f;
 	for (i = 0; i < n; i++) {
-		f = getCluster(&x[i * m], &c[0], m, k);
+		f = get_cluster(x + i * m, c, m, k);
 		if (f != res[i]) flag = 1;
 		res[i] = f;
 		nums[f]++;
@@ -94,7 +94,7 @@ char checkSplitting(const double *x, double *c, int* const res, const int n, con
 			newCores[j] /= f;
 		}
 	}
-	memcpy(&c[0], &newCores[0], k * m * sizeof(double));
+	memcpy(c, newCores, k * m * sizeof(double));
 	free(newCores);
 	free(nums);
 	return flag;
@@ -102,12 +102,12 @@ char checkSplitting(const double *x, double *c, int* const res, const int n, con
 
 void kmeans(const double* const X, int* const y, const int n, const int m, const int k) {
 	double *x = (double*)malloc(n * m * sizeof(double));
-	memcpy(&x[0], &X[0], n * m * sizeof(double));
+	memcpy(x, X, n * m * sizeof(double));
 	autoscaling(x, n, m);
 	double *c = (double*)malloc(k * m * sizeof(double));
-	detCores(x, c, n, m, k);
-	detStartSplitting(x, c, y, n, m, k);
-	while (checkSplitting(x, c, y, n, m, k));
+	det_cores(x, c, n, m, k);
+	det_start_splitting(x, c, y, n, m, k);
+	while (check_splitting(x, c, y, n, m, k));
 	free(x);
 	free(c);
 }

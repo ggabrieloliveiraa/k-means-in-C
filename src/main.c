@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
 	}
 	double *x = (double*)malloc(n * m * sizeof(double));
 	int *y = (int*)malloc(n * sizeof(int));
-	fscanfData(argv[1], x, n * m);
+	fscanf_data(argv[1], x, n * m);
 	long long t;
 	clock_t cl = clock();
 	time_start();
@@ -45,13 +45,13 @@ int main(int argc, char **argv) {
 	cl = clock() - cl;
 	if (argc > 6) {
 		int *ideal = (int*)malloc(n * sizeof(int));
-		fscanfSplitting(argv[6], ideal, n);
-		const double a = getAccuracy(ideal, y, n);
+		fscanf_splitting(argv[6], ideal, n);
+		const double a = get_accuracy(ideal, y, n);
 		printf("Accuracy of k-means clustering = %.5lf;\n", a);
-		fprintfFullResult(argv[5], y, n, a);
+		fprintf_full_result(argv[5], y, n, a);
 		free(ideal);
 	} else {
-		fprintfResult(argv[5], y, n);
+		fprintf_result(argv[5], y, n);
 	}
 	if (t < 0) {
 		printf("Time for k-means clustering = %.6lf s.;\nThe work of the program is completed...\n", (double)cl);

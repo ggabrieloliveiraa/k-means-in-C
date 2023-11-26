@@ -1,8 +1,8 @@
 #include "help.h"
 
-void fscanfData(const char *fn, double *x, const int n) {
-	FILE *fl = fopen(fn, "r");
-	if (fl == NULL) {
+void fscanf_data(const char *fn, double *x, const int n) {
+	FILE *fl;
+	if ((fl = fopen(fn, "r")) == NULL) {
 		printf("Error in opening %s file...\n", fn);
 		exit(1);
 	}
@@ -14,9 +14,9 @@ void fscanfData(const char *fn, double *x, const int n) {
 	fclose(fl);
 }
 
-void fprintfResult(const char *fn, const int* const y, const int n) {
-	FILE *fl  = fopen(fn, "a");
-	if (fl == NULL) {
+void fprintf_result(const char *fn, const int* const y, const int n) {
+	FILE *fl;
+	if ((fl  = fopen(fn, "a")) == NULL) {
 		printf("Error in opening %s result file...\n", fn);
 		exit(1);
 	}
@@ -29,9 +29,9 @@ void fprintfResult(const char *fn, const int* const y, const int n) {
 	fclose(fl);
 }
 
-void fprintfFullResult(const char *fn, const int* const y, const int n, const double a) {
-	FILE *fl  = fopen(fn, "a");
-	if (fl == NULL) {
+void fprintf_full_result(const char *fn, const int* const y, const int n, const double a) {
+	FILE *fl;
+	if ((fl = fopen(fn, "a")) == NULL) {
 		printf("Error in opening %s result file...\n", fn);
 		exit(1);
 	}
@@ -44,9 +44,9 @@ void fprintfFullResult(const char *fn, const int* const y, const int n, const do
 	fclose(fl);
 }
 
-void fscanfSplitting(const char *fn, int *y, const int n) {
-	FILE *fl = fopen(fn, "r");
-	if (fl == NULL) {
+void fscanf_splitting(const char *fn, int *y, const int n) {
+	FILE *fl;
+	if ((fl = fopen(fn, "r")) == NULL) {
 		printf("Can't access %s file with ideal splitting for reading...\n", fn);
 		exit(1);
 	}
@@ -58,7 +58,7 @@ void fscanfSplitting(const char *fn, int *y, const int n) {
 	fclose(fl);
 }
 
-int getNumOfClass(const int *y, const int n) {
+int get_number_of_class(const int *y, const int n) {
 	int i, j, cur;
 	char *v = (char*)malloc(n * sizeof(char));
 	memset(v, 0, n * sizeof(char));
@@ -79,7 +79,7 @@ int getNumOfClass(const int *y, const int n) {
 	return cur;
 }
 
-double getCurAccuracy(const int *x, const int *y, const int *a, const int n) {
+double get_cur_accuracy(const int *x, const int *y, const int *a, const int n) {
 	int i, j;
 	i = j = 0;
 	while  (i < n) {
@@ -91,7 +91,7 @@ double getCurAccuracy(const int *x, const int *y, const int *a, const int n) {
 
 void solve(const int *x, const int *y, int *items, int size, int l, const int n, double *eps) {
     if (l == size) {
-    	double cur = getCurAccuracy(x, y, items, n);
+    	double cur = get_cur_accuracy(x, y, items, n);
     	if (cur > *eps) *eps = cur;
     } else {
     	int i;
@@ -111,15 +111,15 @@ void solve(const int *x, const int *y, int *items, int size, int l, const int n,
     }
 }
 
-double getAccuracy(const int *ideal, const int *r, const int n) {
-	const int k = getNumOfClass(ideal, n);
+double get_accuracy(const int *ideal, const int *r, const int n) {
+	const int k = get_number_of_class(ideal, n);
 	int *nums = (int*)malloc(k * sizeof(int));
 	int i = 0;
 	while (i < k) {
 		nums[i] = i;
 		i++;
 	}
-	double max = getCurAccuracy(r, ideal, nums, n);
+	double max = get_cur_accuracy(r, ideal, nums, n);
 	i = 0;
 	solve(r, ideal, nums, k, i, n, &max);
 	free(nums);
