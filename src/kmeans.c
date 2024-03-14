@@ -51,16 +51,15 @@ void det_cores(const double* const x, double* const c, const int n, const int m,
 	free(nums);
 }
 
-int get_cluster(const double *x, const double *c, const int m, const int k) {
-	double minD = DBL_MAX;
-	int i, res = 0;
-	for (i = 0; i < k; i++) {
-		const double curD = get_distance(x, c, m);
+int get_cluster(const double* const x, const double* const c, const int m, int k) {
+	int res = --k;
+	double minD = get_distance(x, c + k * m, m);	
+	while (k--) {
+		const double curD = get_distance(x, c + k * m, m);
 		if (curD < minD) {
 			minD = curD;
-			res = i;
+			res = k;
 		}
-		c += m;
 	}
 	return res;
 }
