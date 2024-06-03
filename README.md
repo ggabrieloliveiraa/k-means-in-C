@@ -26,6 +26,10 @@ Step 4. Calculate new cluster centers:
 $$l_j=\sum_{i=1}^{n}{\left[y_i\equiv j\right]}$$ $$c_j=\frac{1}{l_j} \sum_{i=1}^{n}{\left[y_i\equiv j\right]\cdot x_i}$$  
 Step 5. Calculate a new split: $y_{i} = \arg\min\limits_{j}\rho\left(x_{i},c_{j} \right)$;   
 Step 6. Repeat steps 4, 5 until the split changes.  
+A visualisation of the first four iterations of the algorithm is shown in Figure 1.  
+<p align="center"> <img width="500" height="500" src="https://github.com/KlimentLagrangiewicz/k-means-in-C/assets/81409101/c91edbf3-5c59-4a41-b6d9-e3f57f0c6516"> </p>  
+<p align="center">Figure 1 — Processing the Old Faithful Geyser dataset using the k-means algorithm</p>   
+     
 ## Example of usage
 ```
 git clone https://github.com/KlimentLagrangiewicz/k-means-in-C

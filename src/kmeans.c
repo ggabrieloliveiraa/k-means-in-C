@@ -13,8 +13,7 @@ void autoscaling(double* const x, const int n, const int m) {
 	const int s = n * m;
 	int j;
 	for (j = 0; j < m; j++) {
-		double sd, Ex, Exx, *ptr;
-		Ex = Exx = 0;
+		double sd, Ex = 0.0, Exx = 0.0, *ptr;		
 		for (ptr = x + j; ptr <= x + s - 1; ptr += m) {
 			sd = *ptr;
 			Ex += sd;
@@ -90,10 +89,9 @@ char check_splitting(const double *x, double *c, int* const res, const int n, co
 	for (i = 0; i < k; i++) {
 		f = nums[i];
 		for (j = i * m; j < i * m + m; j++) {
-			newCores[j] /= f;
+			c[j] = newCores[j] / f;
 		}
-	}
-	memcpy(c, newCores, k * m * sizeof(double));
+	}	
 	free(newCores);
 	free(nums);
 	return flag;
