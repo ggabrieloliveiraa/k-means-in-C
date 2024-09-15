@@ -32,10 +32,21 @@ A visualisation of the first four iterations of the algorithm is shown in figure
 <p align="center">Figure 1 — Processing the Old Faithful Geyser dataset using the k-means algorithm</p>  
 
 ## Example of usage
+Cloning project and changing current directory:
 ```
 git clone https://github.com/KlimentLagrangiewicz/k-means-in-C
 cd k-means-in-C
-cmake .
-cmake --build .
-./k-means-in-C ./datasets/iris/data.txt 150 4 3 ./datasets/iris/new_result.txt ./datasets/iris/res.txt
+```
+Building from source (Linux):
+```
+make
+```
+Building from source (Windows):
+```
+make windows
+```
+If building was ok, you can find executable file in `bin` subdirectory.  
+Run the program:
+```
+./bin/k-means-in-C ./datasets/iris/data.txt 150 4 3 ./datasets/iris/new_result.txt ./datasets/iris/res.txt
 ```
