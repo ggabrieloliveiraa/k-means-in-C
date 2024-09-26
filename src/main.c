@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
 		exit(1);
 	}
 	const int n = atoi(argv[2]), m = atoi(argv[3]), k = atoi(argv[4]);
-	if ((n < 1) || (m < 1) || (k < 1) || (k > n)) {
+	if (n < 1 || m < 1 || k < 1 || k > n) {
 		puts("Values of input parameters are incorrect...");
 		exit(1);
 	}
@@ -58,9 +58,9 @@ int main(int argc, char **argv) {
 			fprintf_result(argv[5], y, n);
 		} else {
 			fscanf_splitting(argv[6], ideal, n);
-			const double a = get_accuracy(ideal, y, n);
-			printf("Accuracy of k-means clustering = %.5lf;\n", a);
-			fprintf_full_result(argv[5], y, n, a);
+			const double p = get_precision(ideal, y, n);
+			printf("Precision of k-means clustering = %.5lf;\n", p);
+			fprintf_full_result(argv[5], y, n, p);
 			free(ideal);
 		}	
 	} else {

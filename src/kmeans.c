@@ -14,7 +14,7 @@ void autoscaling(double* const x, const int n, const int m) {
 	int j;
 	for (j = 0; j < m; j++) {
 		double sd, Ex = 0.0, Exx = 0.0, *ptr;		
-		for (ptr = x + j; ptr <= x + s - 1; ptr += m) {
+		for (ptr = x + j; ptr < x + s; ptr += m) {
 			sd = *ptr;
 			Ex += sd;
 			Exx += sd * sd;
@@ -22,7 +22,7 @@ void autoscaling(double* const x, const int n, const int m) {
 		Exx /= n;
 		Ex /= n;
 		sd = sqrt(Exx - Ex * Ex);
-		for (ptr = x + j; ptr <= x + s - 1; ptr += m) {
+		for (ptr = x + j; ptr < x + s; ptr += m) {
 			*ptr = (*ptr - Ex) / sd;
 		}
 	}
@@ -63,12 +63,6 @@ int get_cluster(const double* const x, const double* const c, const int m, int k
 	return res;
 }
 
-void det_start_splitting(const double *x, const double *c, int* const y, int n, const int m, const int k) {
-	while (n--) {
-		y[n] = get_cluster(x + n * m, c, m, k);
-	}
-}
-
 char check_splitting(const double *x, double *c, int* const res, const int n, const int m, const int k) {
 	double *newCores = (double*)malloc(k * m * sizeof(double));
 	memset(newCores, 0, k * m * sizeof(double));
@@ -103,7 +97,7 @@ void kmeans(const double* const X, int* const y, const int n, const int m, const
 	autoscaling(x, n, m);
 	double *c = (double*)malloc(k * m * sizeof(double));
 	det_cores(x, c, n, m, k);
-	det_start_splitting(x, c, y, n, m, k);
+	memset(y, -1, n * sizeof(int));
 	while (check_splitting(x, c, y, n, m, k));
 	free(x);
 	free(c);
