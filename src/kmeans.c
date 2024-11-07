@@ -18,10 +18,10 @@ double get_distance(const double *x1, const double *x2, int m) {
 void autoscaling(double* const x, const int n, const int m) {
     const int s = n * m;
     int j;
-    #pragma omp parallel for private(j)
+    #pragma omp parallel for private(j) num_threads(2)
     for (j = 0; j < m; j++) {
         double sd, Ex = 0.0, Exx = 0.0, *ptr;
-        #pragma omp parallel for reduction(+:Ex, Exx) private(sd)
+        #pragma omp parallel for reduction(+:Ex, Exx) private(sd) num_threads(2)
         for (int i = 0; i < n; i++) {
             sd = x[i * m + j];
             Ex += sd;
@@ -31,7 +31,7 @@ void autoscaling(double* const x, const int n, const int m) {
         Ex /= n;
         sd = sqrt(Exx - Ex * Ex);
 
-        #pragma omp parallel for
+        #pragma omp parallel for num_threads(2)
         for (int i = 0; i < n; i++) {
             x[i * m + j] = (x[i * m + j] - Ex) / sd;
         }
@@ -80,12 +80,12 @@ char check_splitting(const double *x, double *c, int* const res, const int n, co
     memset(nums, 0, k * sizeof(int));
     char flag = 0;
 
-    #pragma omp parallel
+    # omp parallel num_threads(2)
     {
         double *local_newCores = (double*)calloc(k * m, sizeof(double));
         int *local_nums = (int*)calloc(k, sizeof(int));
         
-        #pragma omp for reduction(|:flag)
+        # omp for reduction(|:flag) num_threads(2)
         for (int i = 0; i < n; i++) {
             int f = get_cluster(x + i * m, c, m, k);
             if (f != res[i]) flag = 1;
@@ -97,7 +97,7 @@ char check_splitting(const double *x, double *c, int* const res, const int n, co
             }
         }
 
-        #pragma omp critical
+        # omp critical num_threads(2)
         {
             for (int i = 0; i < k; i++) {
                 nums[i] += local_nums[i];
