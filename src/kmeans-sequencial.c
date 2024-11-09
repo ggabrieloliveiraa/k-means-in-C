@@ -1,3 +1,7 @@
+/*
+Versão sequencial do algoritmo K-means
+Tempo sequencial: 161.055 segundos
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>

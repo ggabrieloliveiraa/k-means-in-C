@@ -1,3 +1,18 @@
+/*
+Versão híbrida MPI e OpenMP do algoritmo K-means
+Resultados:
+1 processo, 4 threads
+Tempo: 52.489 segundos
+Speedup: 3.06
+
+2 processos, 2 threads
+Tempo: 45.176 segundos
+Speedup: 3.56
+
+4 processos, sem threads
+Tempo: 44.293 segundos
+Speedup: 3.63
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>

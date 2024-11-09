@@ -1,3 +1,22 @@
+/*
+Versão OpenMP do algoritmo K-means
+Resultados:
+1 thread
+Tempo: 170.659 segundos
+Speedup: .94
+
+2 threads
+Tempo: 89.955 segundos
+Speedup: 1.79
+
+4 threads
+Tempo: 46.946 segundos
+Speedup: 3.43
+
+8 threads
+Tempo: 49.461 segundos
+Speedup: 3.25
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
