@@ -77,14 +77,30 @@ void kmeans(double *x, int *y, int n, int m, int k) {
             double *sum = (double *)calloc(m, sizeof(double));
 
             // Soma as coordenadas de cada ponto no cluster
-            #pragma omp parallel for reduction(+:sum[:m], cluster_size) schedule(static)
-            for (int i = 0; i < n; i++) {
-                if (y[i] == j) {
-                    cluster_size++;
-                    for (int l = 0; l < m; l++) {
-                        sum[l] += x[i * m + l];
+            #pragma omp parallel
+            {
+                int cluster_size_local = 0;
+                double *sum_local = (double *)calloc(m, sizeof(double));
+
+                #pragma omp for schedule(static)
+                for (int i = 0; i < n; i++) {
+                    if (y[i] == j) {
+                        cluster_size_local++;
+                        for (int l = 0; l < m; l++) {
+                            sum_local[l] += x[i * m + l];
+                        }
                     }
                 }
+
+                #pragma omp critical
+                {
+                    for (int l = 0; l < m; l++) {
+                        sum[l] += sum_local[l];
+                    }
+                    cluster_size += cluster_size_local;
+                }
+
+                free(sum_local);
             }
 
             // Calcula a média para obter o novo centróide
@@ -149,4 +165,3 @@ int main(int argc, char **argv) {
     free(y);
     return 0;
 }
-
