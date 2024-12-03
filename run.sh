@@ -8,6 +8,7 @@ K=20             # Número de clusters
 SEQUENTIAL_OUTPUT="src/results-sequencial.txt"
 OPENMP_OUTPUT="src/results-openmp.txt"
 OMP_MPI_OUTPUT="src/results-omp-mpi.txt"
+OPENMP_GPU_OUTPUT="src/results-openmp-gpu.txt"  # Novo arquivo de saída para GPU
 RESULTS_FILE="src/results.txt"
 
 # Apagando o arquivo de resultados no início
@@ -15,6 +16,7 @@ RESULTS_FILE="src/results.txt"
 > $OMP_MPI_OUTPUT
 > $OPENMP_OUTPUT
 > $SEQUENTIAL_OUTPUT
+> $OPENMP_GPU_OUTPUT  # Limpa o arquivo de saída da GPU
 
 # Exibindo as informações dos parâmetros de entrada
 echo "Executando o programa K-means com os seguintes parâmetros:" | tee -a $RESULTS_FILE
@@ -36,8 +38,6 @@ convert_to_seconds() {
     # Agora convertemos o tempo "XmYs" para segundos
     echo "$real_time" | sed -E 's/([0-9]+)m([0-9.]+)s/\1 \2/' | awk '{print $1 * 60 + $2}'
 }
-
-
 
 # Função para calcular o speedup
 calc_speedup() {
@@ -76,6 +76,15 @@ if [ $? -ne 0 ]; then
 fi
 echo "Compilação do K-means com OpenMP e MPI concluída com sucesso!" | tee -a $RESULTS_FILE
 
+echo "Compilando o programa K-means com OpenMP para GPU..." | tee -a $RESULTS_FILE
+# Substitua 'sm_60' pela arquitetura da sua GPU
+gcc -fopenmp -foffload=nvptx-none -O3 src/kmeans-omp-gpu.c -o src/kmeans-omp-gpu -lm
+if [ $? -ne 0 ]; then
+    echo "Erro ao compilar kmeans-omp-gpu.c"
+    exit 1
+fi
+echo "Compilação do K-means com OpenMP para GPU concluída com sucesso!" | tee -a $RESULTS_FILE
+
 # Executando a versão sequencial e exibindo o tempo de execução
 echo -e "\nExecutando o K-means sequencial..." | tee -a $RESULTS_FILE
 SEQ_TIME=$( { time ./src/kmeans-sequencial "$DATA_FILE" "$N" "$M" "$K" "$SEQUENTIAL_OUTPUT"; } 2>&1 | tee >(grep "real" | awk '{print $2}') )
@@ -94,6 +103,17 @@ for threads in 1 2 4 8; do
         echo "Speedup OpenMP com $threads threads: $SPEEDUP" | tee -a $RESULTS_FILE
     fi
 done
+
+# Testando a versão OpenMP para GPU
+echo -e "\nExecutando o K-means com OpenMP para GPU..." | tee -a $RESULTS_FILE
+# Você pode ajustar o número de threads ou outros parâmetros específicos da GPU conforme necessário
+OPENMP_GPU_TIME=$( { time ./src/kmeans-omp-gpu "$DATA_FILE" "$N" "$M" "$K" "$OPENMP_GPU_OUTPUT"; } 2>&1 | tee >(grep "real" | awk '{print $2}') )
+OPENMP_GPU_TIME_SEC=$(convert_to_seconds "$OPENMP_GPU_TIME")
+echo "Tempo OpenMP para GPU: $OPENMP_GPU_TIME_SEC segundos" | tee -a $RESULTS_FILE
+SPEEDUP_GPU=$(calc_speedup $SEQ_TIME_SEC $OPENMP_GPU_TIME_SEC)
+if [ $? -eq 0 ]; then
+    echo "Speedup OpenMP para GPU: $SPEEDUP_GPU" | tee -a $RESULTS_FILE
+fi
 
 # Testando as combinações de OpenMP e MPI
 echo -e "\nExecutando o K-means com OpenMP e MPI..." | tee -a $RESULTS_FILE
@@ -134,6 +154,6 @@ fi
 echo -e "\nExecuções concluídas." | tee -a $RESULTS_FILE
 echo "Resultados do K-means sequencial estão em $SEQUENTIAL_OUTPUT" | tee -a $RESULTS_FILE
 echo "Resultados do K-means com OpenMP estão em $OPENMP_OUTPUT" | tee -a $RESULTS_FILE
+echo "Resultados do K-means com OpenMP para GPU estão em $OPENMP_GPU_OUTPUT" | tee -a $RESULTS_FILE
 echo "Resultados do K-means com OpenMP e MPI estão em $OMP_MPI_OUTPUT" | tee -a $RESULTS_FILE
 echo "Todos os tempos e cálculos de speedup foram salvos em $RESULTS_FILE" | tee -a $RESULTS_FILE
-
