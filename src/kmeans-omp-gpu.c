@@ -46,7 +46,7 @@ void fscanf_data(const char *fn, double *x, const int n) {
     fclose(fl);
 }
 
-// Função principal do K-means adaptada para OpenMP GPU
+// Função principal do K-means adaptada para OpenMP GPU com compilação condicional
 void kmeans_gpu(double *x, int *y, int n, int m, int k) {
     // Aloca memória para os centróides
     double *centroids = (double *)malloc(k * m * sizeof(double));
@@ -66,10 +66,11 @@ void kmeans_gpu(double *x, int *y, int n, int m, int k) {
     do {
         changed = 0;
 
+#ifdef USE_GPU
         // Atribuição dos pontos aos centróides mais próximos (executado na GPU)
         #pragma omp target data map(to: x[0:n*m], centroids[0:k*m]) map(from: y[0:n], changed)
         {
-            #pragma omp target teams distribute parallel for collapse(1) schedule(static)
+            #pragma omp target teams distribute parallel for schedule(static)
             for (int i = 0; i < n; i++) {
                 double min_dist = DBL_MAX;
                 int closest_centroid = -1;
@@ -104,7 +105,7 @@ void kmeans_gpu(double *x, int *y, int n, int m, int k) {
                 exit(1);
             }
 
-            #pragma omp target teams distribute parallel for collapse(1) schedule(static) reduction(+:sum[:k*m], count[:k])
+            #pragma omp target teams distribute parallel for schedule(static)
             for (int i = 0; i < n; i++) {
                 int cluster = y[i];
                 if (cluster >= 0 && cluster < k) {
@@ -118,7 +119,7 @@ void kmeans_gpu(double *x, int *y, int n, int m, int k) {
             }
 
             // Atualiza os centróides com as novas médias
-            #pragma omp target teams distribute parallel for collapse(1) schedule(static)
+            #pragma omp target teams distribute parallel for schedule(static)
             for (int j = 0; j < k; j++) {
                 if (count[j] > 0) {
                     for (int l = 0; l < m; l++) {
@@ -130,9 +131,84 @@ void kmeans_gpu(double *x, int *y, int n, int m, int k) {
             free(sum);
             free(count);
         }
+#else
+        // Atribuição dos pontos aos centróides mais próximos (executado na CPU)
+        #pragma omp parallel for schedule(static) reduction(+:changed)
+        for (int i = 0; i < n; i++) {
+            double min_dist = DBL_MAX;
+            int closest_centroid = -1;
+
+            for (int j = 0; j < k; j++) {
+                double dist = euclidean_distance(&x[i * m], &centroids[j * m], m);
+                if (dist < min_dist) {
+                    min_dist = dist;
+                    closest_centroid = j;
+                }
+            }
+
+            if (y[i] != closest_centroid) {
+                #pragma omp atomic
+                y[i] = closest_centroid;
+                changed = 1;
+            }
+        }
+
+        // Recalcula os centróides (executado na CPU)
+        #pragma omp parallel for schedule(static)
+        for (int j = 0; j < k; j++) {
+            int cluster_size = 0;
+            double *sum = (double *)calloc(m, sizeof(double));
+
+            if (sum == NULL) {
+                printf("Memory allocation error for sum...\n");
+                exit(1);
+            }
+
+            #pragma omp parallel
+            {
+                int cluster_size_local = 0;
+                double *sum_local = (double *)calloc(m, sizeof(double));
+
+                if (sum_local == NULL) {
+                    printf("Memory allocation error for sum_local...\n");
+                    exit(1);
+                }
+
+                #pragma omp for schedule(static)
+                for (int i = 0; i < n; i++) {
+                    if (y[i] == j) {
+                        cluster_size_local++;
+                        for (int l = 0; l < m; l++) {
+                            sum_local[l] += x[i * m + l];
+                        }
+                    }
+                }
+
+                #pragma omp critical
+                {
+                    for (int l = 0; l < m; l++) {
+                        sum[l] += sum_local[l];
+                    }
+                    cluster_size += cluster_size_local;
+                }
+
+                free(sum_local);
+            }
+
+            // Calcula a média para obter o novo centróide
+            if (cluster_size > 0) {
+                for (int l = 0; l < m; l++) {
+                    centroids[j * m + l] = sum[l] / cluster_size;
+                }
+            }
+
+            free(sum);
+        }
+#endif
 
     } while (changed);
 
+    // Libera a memória dos centróides
     free(centroids);
 }
 
