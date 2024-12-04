@@ -8,7 +8,7 @@ K=20            # Número de clusters
 SEQUENTIAL_OUTPUT="src/results-sequencial.txt"
 OPENMP_OUTPUT="src/results-openmp.txt"
 OMP_MPI_OUTPUT="src/results-omp-mpi.txt"
-CUDA_OUTPUT="src/results-cuda.txt"  # Arquivo de saída para CUDA
+CUDA_OUTPUT="src/results-cuda.txt"       # Arquivo de saída para CUDA
 OPENMP_GPU_OUTPUT="src/results-openmp-gpu.txt"  # Novo arquivo de saída para OpenMP GPU
 RESULTS_FILE="src/results.txt"
 
@@ -17,8 +17,8 @@ RESULTS_FILE="src/results.txt"
 > $OMP_MPI_OUTPUT
 > $OPENMP_OUTPUT
 > $SEQUENTIAL_OUTPUT
-> $CUDA_OUTPUT  # Limpa o arquivo de saída da CUDA
-> $OPENMP_GPU_OUTPUT  # Limpa o arquivo de saída da OpenMP GPU
+> $CUDA_OUTPUT          # Limpa o arquivo de saída da CUDA
+> $OPENMP_GPU_OUTPUT    # Limpa o arquivo de saída da OpenMP GPU
 
 # Exibindo as informações dos parâmetros de entrada
 echo "Executando o programa K-means com os seguintes parâmetros:" | tee -a $RESULTS_FILE
@@ -87,11 +87,11 @@ if [ $? -ne 0 ]; then
 fi
 echo "Compilação do K-means com CUDA concluída com sucesso!" | tee -a $RESULTS_FILE
 
-echo "Compilando o programa K-means com OpenMP para GPU..." | tee -a $RESULTS_FILE
-# Ajuste a arquitetura e flags conforme sua GPU e suporte do compilador
-gcc8 -fopenmp src/kmeans-omp-gpu.c -o src/kmeans-omp-gpu -lm
+echo "Compilando o programa K-means com OpenMP para GPU usando gcc8..." | tee -a $RESULTS_FILE
+# Compilando com gcc8 e -fopenmp
+gcc-8 -fopenmp src/kmeans-omp-gpu.c -o src/kmeans-omp-gpu -lm
 if [ $? -ne 0 ]; then
-    echo "Erro ao compilar kmeans-omp-gpu.c"
+    echo "Erro ao compilar kmeans-omp-gpu.c com gcc8"
     exit 1
 fi
 echo "Compilação do K-means com OpenMP para GPU concluída com sucesso!" | tee -a $RESULTS_FILE

@@ -5,18 +5,18 @@ Speedup: x.xx
 */
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <math.h>
 #include <float.h>
 #include <omp.h>
 
-// Função para calcular a distância euclidiana
-double euclidean_distance(double *a, double *b, int m) {
+// Função para calcular a distância Euclidiana ao quadrado
+double euclidean_distance_squared(double *a, double *b, int m) {
     double sum = 0.0;
     for (int i = 0; i < m; i++) {
-        sum += (a[i] - b[i]) * (a[i] - b[i]);
+        double diff = a[i] - b[i];
+        sum += diff * diff;
     }
-    return sqrt(sum);
+    return sum;
 }
 
 // Função para ler os dados do arquivo
@@ -37,7 +37,7 @@ void fscanf_data(const char *fn, double *x, const int n) {
 }
 
 // Função principal do K-means com suporte a GPU
-void kmeans(double *x, int *y, int n, int m, int k) {
+void kmeans_gpu(double *x, int *y, int n, int m, int k) {
     // Aloca memória para os centróides
     double *centroids = (double *)malloc(k * m * sizeof(double));
     if (centroids == NULL) {
@@ -73,13 +73,7 @@ void kmeans(double *x, int *y, int n, int m, int k) {
                 int closest_centroid = -1;
 
                 for (int j = 0; j < k; j++) {
-                    double dist = 0.0;
-                    // Calcular distância manualmente para evitar chamadas de função
-                    for (int l = 0; l < m; l++) {
-                        double diff = x[i * m + l] - centroids[j * m + l];
-                        dist += diff * diff;
-                    }
-                    dist = sqrt(dist);
+                    double dist = euclidean_distance_squared(&x[i * m], &centroids[j * m], m);
 
                     if (dist < min_dist) {
                         min_dist = dist;
@@ -179,7 +173,7 @@ int main(int argc, char **argv) {
         y[i] = -1;
     }
     fscanf_data(argv[1], x, n * m);
-    kmeans(x, y, n, m, k);
+    kmeans_gpu(x, y, n, m, k);
     fprintf_result(argv[5], y, n);
     free(x);
     free(y);
