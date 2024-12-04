@@ -77,8 +77,8 @@ fi
 echo "Compilação do K-means com OpenMP e MPI concluída com sucesso!" | tee -a $RESULTS_FILE
 
 echo "Compilando o programa K-means com CUDA..." | tee -a $RESULTS_FILE
-# Substitua 'sm_60' pela arquitetura da sua GPU, por exemplo, 'sm_75' para Turing
-nvcc -O3 src/kmeans-cuda.cu -o src/kmeans-cuda -lm
+# Especificando a arquitetura sm_61 para a GT 1030
+nvcc -O3 -arch=sm_61 src/kmeans-cuda.cu -o src/kmeans-cuda -lm
 if [ $? -ne 0 ]; then
     echo "Erro ao compilar kmeans-cuda.cu"
     exit 1
