@@ -87,11 +87,11 @@ if [ $? -ne 0 ]; then
 fi
 echo "Compilação do K-means com CUDA concluída com sucesso!" | tee -a $RESULTS_FILE
 
-echo "Compilando o programa K-means com OpenMP para GPU usando gcc8..." | tee -a $RESULTS_FILE
+echo "Compilando o programa K-means com OpenMP para GPU..." | tee -a $RESULTS_FILE
 # Compilando com gcc8 e -fopenmp
-gcc-8 -fopenmp src/kmeans-omp-gpu.c -o src/kmeans-omp-gpu -lm
+gcc8 -O3 -fopenmp src/kmeans-omp-gpu.c -o src/kmeans-omp-gpu -lm
 if [ $? -ne 0 ]; then
-    echo "Erro ao compilar kmeans-omp-gpu.c com gcc8"
+    echo "Erro ao compilar kmeans-omp-gpu.c"
     exit 1
 fi
 echo "Compilação do K-means com OpenMP para GPU concluída com sucesso!" | tee -a $RESULTS_FILE
