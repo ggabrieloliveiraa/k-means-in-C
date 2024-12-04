@@ -11,5 +11,43 @@ Compilando o programa K-means com OpenMP...
 Compilação do K-means com OpenMP concluída com sucesso!
 Compilando o programa K-means com OpenMP e MPI...
 Compilação do K-means com OpenMP e MPI concluída com sucesso!
+Compilando o programa K-means com CUDA...
+Compilação do K-means com CUDA concluída com sucesso!
 
 Executando o K-means sequencial...
+Tempo sequencial: 160.886 segundos
+
+Executando o K-means com OpenMP usando 1 threads...
+Tempo OpenMP com 1 threads: 170.676 segundos
+Speedup OpenMP com 1 threads: .94
+
+Executando o K-means com OpenMP usando 2 threads...
+Tempo OpenMP com 2 threads: 91.134 segundos
+Speedup OpenMP com 2 threads: 1.76
+
+Executando o K-means com OpenMP usando 4 threads...
+Tempo OpenMP com 4 threads: 47.118 segundos
+Speedup OpenMP com 4 threads: 3.41
+
+Executando o K-means com OpenMP usando 8 threads...
+Tempo OpenMP com 8 threads: 49.595 segundos
+Speedup OpenMP com 8 threads: 3.24
+
+Executando o K-means com CUDA...
+Tempo CUDA: 4.374 segundos
+Speedup CUDA: 36.78
+
+Executando o K-means com OpenMP e MPI...
+Tempo OpenMP e MPI (1 processo, 4 threads): 52.689 segundos
+Speedup OpenMP e MPI (1 processo, 4 threads): 3.05
+Tempo OpenMP e MPI (2 processos, 2 threads): 44.52 segundos
+Speedup OpenMP e MPI (2 processos, 2 threads): 3.61
+Tempo OpenMP e MPI (4 processos, sem threads): 44.029 segundos
+Speedup OpenMP e MPI (4 processos, sem threads): 3.65
+
+Execuções concluídas.
+Resultados do K-means sequencial estão em src/results-sequencial.txt
+Resultados do K-means com OpenMP estão em src/results-openmp.txt
+Resultados do K-means com CUDA estão em src/results-cuda.txt
+Resultados do K-means com OpenMP e MPI estão em src/results-omp-mpi.txt
+Todos os tempos e cálculos de speedup foram salvos em src/results.txt
